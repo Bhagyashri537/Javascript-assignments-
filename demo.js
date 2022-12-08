@@ -10,7 +10,7 @@ console.log(itemlist.lastElementChild);
 itemlist.lastElementChild.textContent = "hello 1";
 
 //CREATE CHILD
-console.log(itemlist.childNodes)
+console.log(itemlist.childNodes);
 itemlist.childNodes.textContent = 'sure'
 
 //LASTCHILD
