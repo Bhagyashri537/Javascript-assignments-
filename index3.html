@@ -17,24 +17,29 @@
         <input type="tel" name="phonenumber" required/><br>
         <button>Submit</button>
     </form>
+    <ul id="listOfusers"></ul>
     <script>
         function saveToLocalStorage(event){
             event.preventDefault();
             var name = event.target.username.value;
             var email = event.target.emailId.value;
             var phonenumber = event.target.phonenumber.value;
-            localStorage.setItem('name',name);
-            localStorage.setItem('email',email);
-            localStorage.setItem('phonenumber', phonenumber);
-           
+          
             const myobj = {
                 name,
                 email,
                 phonenumber
             }
         
-        localStorage.setItem('userdetails', JSON.stringify(myobj))
+        localStorage.setItem(myobj.email, JSON.stringify(myobj))
+        showNewUsers(myobj)
         }
+        function showNewUsers(user){
+            const parentNode = document.getElementById('listOfusers');
+            const childHTML = `<li>${user.name} - ${user.email} </li>`;
+            parentNode.innerHTML = parentNode.innerHTML + childHTML
+        }
+        
     </script>
 </body>
 </html>
