@@ -1,61 +1,59 @@
-var itemlist = document.querySelector('#items');
-
- //PARENT ELEMENT
- console.log(itemlist.parentElement);
- itemlist.parentElement.style.backgroundColor = "grey";
- console.log(itemlist.parentElement.parentElement.parentElement);
-
- //LASTELEMENTCHILD
-console.log(itemlist.lastElementChild);
-itemlist.lastElementChild.textContent = "hello 1";
-
-//CREATE CHILD
-console.log(itemlist.childNodes);
-itemlist.childNodes.textContent = 'sure'
-
-//LASTCHILD
-console.log(itemlist.lasttChild);
-
-//FIRST ELEMENT CHILD
-console.log(itemlist.firstElementChild);
-itemlist.firstElementChild.textContent = "hello";
-
-//FIRSTCHILD
-console.log(itemlist.firstChild);
-
-//NEXT SIBLING
-console.log(itemlist.nextSibling);
-
-//NEXT ELEMENT SIBLING
-console.log(itemlist.nextElementSibling);
-
-//PREVIOUS SIBLING
-console.log(itemlist.previousSibling);
-
-//PREVIOUS ELEMET SIBLING
-console.log(itemlist.previousElementSibling);
-itemlist.previousElementSibling.style.color = "green";
-
-//create div
-var newdiv = document.createElement('div');
-//add class
-newdiv.className = "hello";
-//add id
-newdiv.id = "HELLO";
-//add attr
-newdiv.setAttribute("title", "hello");
-//create text node
-var  newdivText = document.createTextNode('Hello');
-//add text to div
-newdiv.appendChild(newdivText);
-//display on dom
-var container = document.querySelector("header .container");
-var h1 = document.querySelector('header h1');
-
-console.log(newdiv)
-container.insertBefore(newdiv, h1)
 
 
-let ul = document.querySelector('ul.list-group')
+    function saveToLocalStorage(event){
+      event.preventDefault();
+      var amount = event.target.amount.value;
+      var description = event.target.description.value;
+      var category= event.target.category.value;
+    
+    const obj = {
+      amount,
+      description,
+      category
+    }
+    localStorage.setItem(obj.amount, JSON.stringify(obj))
+    showOnScreen(obj)
+  }
+  window.addEventListener("DOMContentLoaded", () => {
+    const localStorageObj = localStorage;
+    const localstoragekeys  = Object.keys(localStorageObj)
+    for(var i =0; i< localstoragekeys.length; i++){
+        const key = localstoragekeys[i]
+        const userDetailsString = localStorageObj[key];
+        const expenceDetailsObj = JSON.parse(userDetailsString);
+        showOnScreen(expenceDetailsObj)
+    }
+})
 
-ul.prepend('hello')
+  function showOnScreen(expence){
+    
+
+    const parentNode = document.getElementById('listOfExpence');
+    const childHTML = `<li id =${expence.amount}>${expence.amount} - ${expence.description} - ${expence.category} <button onclick =DeleteExpence('${expence.amount}') class='btn btn-outline-primary btn-sm'>Delete</button><button onclick = editExpence('${expence.amount}','${expence.description}','${expence.category}') class='btn btn-outline-primary btn-sm'>Edit</button> </li>`;
+    parentNode.innerHTML = parentNode.innerHTML + childHTML;
+   
+  }
+
+  function editExpence(amount,description,category){
+    document.getElementById('number').value = amount;
+   document.getElementById('text1').value = description;
+    document.getElementById('text2').value = category;
+   DeleteExpence(amount);
+   
+}
+
+
+  function DeleteExpence(amount){
+    console.log(amount);
+    localStorage.removeItem(amount);
+    removeFromScreen(amount);
+  }
+  
+  function removeFromScreen(amount){
+    const parent = document.getElementById('listOfExpence');
+    const element = document.getElementById(amount);
+    console.log(element, 'abc');
+    console.log(parent, 'xde');
+    parent.removeChild(element);
+  }
+ 
