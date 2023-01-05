@@ -8,95 +8,112 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
-<div class="container">
-  <form onsubmit="saveToStorage(event)" name="my-form" id="my-form" class="form-group">
-    <h3 style="text-align: center; font-weight: bold;">Expense Tracker</h3>
-    <div class="row jumbotron">
+  <div class="container">
+  <form onsubmit="saveToStorage(event)">
+    <h2 style="text-align: center;">Restaurant App</h2>
+    <div class="row jumbotron bg-light border border-dark">
       <div class="col-sm-4">
-        <label for="inputname">Choose Expense Amount:</label>
-        <input type="number" class="form-control" id="number" name="amount" placeholder="Amount">
+        <label for="inputname">Choose Price:</label>
+        <input type="number" placeholder="Amount" id="amount" name="amount" class="form-control">
       </div>
       <div class="col-sm-4">
-        <label for="inputname">Choose Description:</label>
-        <input type="text" class="form-control" id="text1" name="description" placeholder="Description">
+        <label for="inputname">Choose Dish:</label>
+        <input type="text" placeholder="Dish" id="dish" name="dish" class="form-control">
       </div>
       <div class="col-sm-4">
-        <label for="inputname">Choose Category:</label>
-        <input type="text" class="form-control" id="text2" name="category" placeholder="Category">
+        <label for="inputname">Choose table:</label>
+        <select name="table" id="table">
+        <option value="table1">Table 1</option>
+        <option value="table2">Table 2</option>
+        <option value="table3">Table 3</option>
+        </select>
       </div>
       <div class="col-md-12">
-         <button type="submit" class="btn-btn primary">Add Expenses</button>
+        <button type="submit">Add to bill</button>
       </div>
+     
     </div>
   </form>
-  <ul id="listOfExpense"></ul>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"></script>
-<script>
-  function saveToStorage(event){
-    event.preventDefault();
-    const amount = event.target.amount.value;
-    const description = event.target.description.value;
-    const category = event.target.category.value;
+  </div>
+  <ul id="list">Orders
+    <li id="list1">Table 1</li>
+    <li id="list2">Table 2</li>
+    <li id="list3">Table 3</li>
+  </ul>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"></script>
+  <script>
+     function saveToStorage(event){
+       event.preventDefault();
+       var amount = event.target.amount.value;
+       var dish = event.target.dish.value;
+       var table = event.target.table.value;
 
-    const obj = {
-           amount,
-           description,
-           category
-    }
-   axios.post("https://crudcrud.com/api/c943751192c0463a80c52d632f59d4b6/expenseData",obj)
-   .then((response) => {
-    //console.log(response)
-    showExpenseOnscreen(response.data)
-   })
-   .catch((err) => {
-    console.log(err)
-   })
-  }
-   window.addEventListener("DOMContentLoaded", () =>{
-    axios.get("https://crudcrud.com/api/c943751192c0463a80c52d632f59d4b6/expenseData")
-    .then((response) => {
-      console.log(response)
-      for(var i=0; i<response.data.length; i++){
-        showExpenseOnscreen(response.data[i])
-      }
-    })
-    .catch((err) =>{
-      console.log(err)
-    })
-   })
-  
-  function showExpenseOnscreen(expense){
-     const totalExpense = expense._totalAmount;
-     const parentNode = document.getElementById("listOfExpense");
-     const childHTML = `<li id=${expense._totalAmount}>${expense.amount}-${expense.description}-${expense.category}<button onclick=deleteExpense('${expense._totalAmount}')>Delete</button><button onclick=editExpense('${expense.amount}','${expense.description}','${expense.category}','${expense._totalAmount}')>Edit</button></li>`
-     parentNode.innerHTML=parentNode.innerHTML + childHTML;
-  }
+       const obj = {
+        amount,
+        dish,
+        table
+       }
 
-  function editExpense(amount,description,category,totalExpense){
-    document.getElementById('number').value = amount;
-    document.getElementById('text1').value = description;
-    document.getElementById('text2').value = category;
-    deleteExpense(totalExpense)
-  }
-
-  function deleteExpense(totalExpense){
-    axios.delete(`https://crudcrud.com/api/c943751192c0463a80c52d632f59d4b6/expenseData/${totalExpense}`)
-    .then((response) => {
-     // console.log(response)
-      removeFromScreen(totalExpense)
+       axios.post("https://crudcrud.com/api/96f5dd979e914f48945cab8d572fd917/orderData",obj)
+       .then((response) => {
+        //console.log(response)
+        showOnScreen(response.data)
     })
     .catch((err) => {
-      console.log(err)
+        console.log(err)
     })
-  }
-  function removeFromScreen(totalExpense){
-    const parent = document.getElementById('listOfExpene')
-    const element = document.getElementById(totalExpense)
-    if(element){
-      parent.removeChild(element)
+
+     }
+     window.addEventListener("DOMContentLoaded", () => {
+    axios.get(`https://crudcrud.com/api/96f5dd979e914f48945cab8d572fd917/orderData`)
+    .then((response) => {
+    console.log(response);
+    for(var i=0; i<response.data.length; i++){
+        showOnScreen(response.data[i]);
     }
-  }
-</script>
+    
+  })
+   .catch((err) => {
+    console.log(err)
+  })
+ })
+   
+
+     function showOnScreen(order){
+      
+      const orderId = order._id;
+      const parentNode = document.getElementById('list')
+      
+      
+      const childHTML = `<li id=${order._id}>${order.amount}-${order.dish}-${order.table}<button 
+      onclick="deleteOrder('${order._id}')">Delete</button></li>`
+     
+      parentNode.innerHTML=parentNode.innerHTML+childHTML;
+      
+     }
+
+    function deleteOrder(orderId){
+      axios.delete(`https://crudcrud.com/api/96f5dd979e914f48945cab8d572fd917/orderData/${orderId}`)
+      .then((response) => {
+        //console.log(response)
+        removeFromScreen(orderId)
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+     }
+
+    function removeFromScreen(orderId){
+    const parent = document.getElementById('list');
+    const element = document.getElementById(orderId);
+    
+      parent.removeChild(element);
+    }
+   
+ 
+
+  </script>
+  
 </body>
 </html>
+     
