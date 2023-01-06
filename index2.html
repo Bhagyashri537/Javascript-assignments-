@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+  <div class="container">
+    <form onsubmit="saveToStorage(event)">
+      <div class="row jumbotron">
+        <div class="col-sm-4">
+          <label for="inputname">Selling Price:</label>
+          <input type="number" class="from-control" id="price" name="price">
+        </div>
+        <div class="col-sm-4">
+          <label for="inputname">Product Name:</label>
+          <input type="text" class="from-control" id="product" name="product">
+        </div>
+        <div class="col-md-12">
+          <button type="submit">Add Product</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <ul id="list"></ul>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"></script>
+  <script>
+    function saveToStorage(event){
+      event.preventDefault()
+      var price = event.target.price.value;
+      var product = event.target.product.value;
+
+      const obj = {
+        price,
+        product
+      }
+
+      axios.post("https://crudcrud.com/api/d270ce59ff6641f48624362358da6399/productdata",obj)
+      .then((response) => {
+        //console.log(response)
+        showOnScreen(response.data)
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+  }
+      window.addEventListener("DOMContentLoaded",() => {
+        axios.get("https://crudcrud.com/api/d270ce59ff6641f48624362358da6399/productdata")
+        .then((response) => {
+          console.log(response)
+          for(var i=0; i<response.data.length; i++){
+            showOnScreen(response.data[i])
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      })
+    
+
+    function showOnScreen(expense){
+      expenseId = expense._id;
+
+
+     
+      const parentNode = document.getElementById('list')
+      const childHTML = `<li id=${expense._id}>${expense.price}-${expense.product}<button 
+       onclick=DeleteExpense('${expense._id}')>delete</button></li>`
+      parentNode.innerHTML = parentNode.innerHTML+childHTML;
+       
+     
+      const listitem = [].slice.call(document.querySelectorAll('#list li'))
+      const sum = listitem.reduce(function(sum,el){
+return sum+parseFloat(el.innerHTML)
+      },0)
+      console.log(sum)
+
+   
+    }
+   
+    
+  
+
+    function DeleteExpense(expenseId){
+      axios.delete(`https://crudcrud.com/api/d270ce59ff6641f48624362358da6399/productdata/${expenseId}`)
+      .then((response) => {
+        console.log(response)
+        removeFromScreen(expenseId)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    }
+
+    function removeFromScreen(expenseId){
+      const parent = document.getElementById('list')
+      const element = document.getElementById(expenseId)
+      parent.removeChild(element)
+    }
+  </script>
+  
+</body>
+</html>
